@@ -1,0 +1,3 @@
+## API para devs adicionar vagas que acharam interessantes 
+
+## Em desenvolvimento...
