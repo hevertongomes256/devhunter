@@ -21,7 +21,7 @@ class UsuarioSchemaCreate(UsuarioSchemaBase):
     senha: str
 
 
-class UsuarioSchemaArtigos(UsuarioSchemaBase):
+class UsuarioSchemaVagas(UsuarioSchemaBase):
     artigos: Optional[List[VagaSchema]]
 
 
