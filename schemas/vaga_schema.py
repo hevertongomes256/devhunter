@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, HttpUrl
@@ -8,6 +9,6 @@ class VagaSchema(BaseModel):
     titulo: str
     descricao: str
     url: HttpUrl
-    data_criacao: str
+    data_criacao: datetime
     disponivel: bool
     usuario_id: Optional[int]

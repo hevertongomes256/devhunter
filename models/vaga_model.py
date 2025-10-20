@@ -16,6 +16,6 @@ class VagaModel(settings.DBBaseModel):
 
     criador = relationship(
         "UsuarioModel",
-        back_populates='artigos',
+        back_populates='vagas',
         lazy='joined'
     )
