@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from models.usuario_model import UsuarioModel
 from schemas.usuario_schema import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp, UsuarioSchemaVagas
 from core.deps import get_session, get_current_user
-from core.secutiry import gerar_hash_senha
+from core.security import gerar_hash_senha
 from core.auth import autentitar, criar_token_acesso
 
 

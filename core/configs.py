@@ -1,6 +1,7 @@
 import os
 from pydantic import BaseSettings
 from dotenv import load_dotenv
+from sqlalchemy.ext.declarative import declarative_base
 
 load_dotenv()
 
@@ -19,6 +20,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = os.getenv('ALGORITHM')
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 1
+
+    DBBaseModel = declarative_base()
 
     class Config:
         case_sensitive = True
