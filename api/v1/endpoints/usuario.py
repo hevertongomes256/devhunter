@@ -37,7 +37,7 @@ async def post_usuario(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(
             return novo_usuario
         except IntegrityError:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail='Já exista usuário cadastrado com os dados fornecidos!')
+                                detail='Já existe usuário cadastrado com os dados fornecidos!')
 
 
 # GET Usuários

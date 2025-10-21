@@ -27,6 +27,9 @@ async def post_vaga(vaga: VagaSchema, usuario_logado: UsuarioModel = Depends(get
 
     db.add(nova_vaga)
     await db.commit()
+    await db.refresh(nova_vaga)
+
+    return nova_vaga
 
 
 # GET Vagas
@@ -56,31 +59,28 @@ async def get_vaga(vaga_id: int, db: AsyncSession = Depends(get_session)):
 
 
 # PUT Vaga
-@router.get('/{vaga_id}', response_model=VagaSchema, status_code=status.HTTP_200_OK)
+@router.put('/{vaga_id}', response_model=VagaSchema, status_code=status.HTTP_200_OK)
 async def put_vaga(vaga_id: int, vaga: VagaSchema, db: AsyncSession = Depends(get_session), usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with db as session:
         query = select(VagaModel).filter(VagaModel.id == vaga_id)
         result = await session.execute(query)
         vaga_up: VagaModel = result.scalars().unique().one_or_none()
 
-        if vaga_up:
-            if vaga.titulo:
-                vaga_up.titulo = vaga.titulo
-            if vaga.descricao:
-                vaga_up.descricao = vaga.descricao
-            if vaga.url:
-                vaga_up.url = vaga.url
-            if vaga.disponivel:
-                vaga_up.disponivel = vaga.disponivel
-            if usuario_logado.id != vaga_up.usuario_id:
-                vaga_up.usuario_id = usuario_logado.id
+        if not vaga_up:
+            raise HTTPException(detail='Vaga não encontrada', status_code=status.HTTP_404_NOT_FOUND)
 
-            await session.commit()
+        dados_para_atualizar_vaga = vaga.dict(exclude_unset=True)
 
-            return vaga_up
-        else:
-            raise HTTPException(detail='Vaga não encontrada',
-                                status_code=status.HTTP_404_NOT_FOUND)
+        for campo, valor in dados_para_atualizar_vaga.items():
+            setattr(vaga_up, campo, valor)
+
+        if usuario_logado.id != vaga_up.usuario_id:
+            vaga_up.usuario_id = usuario_logado.id
+
+        await session.commit()
+        await session.refresh(vaga_up)
+
+        return vaga_up
 
 
 # DELETE Artigo

@@ -9,6 +9,9 @@ class VagaSchema(BaseModel):
     titulo: str
     descricao: str
     url: HttpUrl
-    data_criacao: datetime
+    data_criacao:  Optional[datetime]
     disponivel: bool
     usuario_id: Optional[int]
+
+    class Config:
+        orm_mode = True
