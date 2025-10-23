@@ -22,7 +22,7 @@ class UsuarioSchemaCreate(UsuarioSchemaBase):
 
 
 class UsuarioSchemaVagas(UsuarioSchemaBase):
-    artigos: Optional[List[VagaSchema]]
+    vagas: Optional[List[VagaSchema]]
 
 
 class UsuarioSchemaUp(UsuarioSchemaBase):

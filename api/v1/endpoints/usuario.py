@@ -41,7 +41,7 @@ async def post_usuario(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(
 
 
 # GET Usuários
-@router.get('/', response_class=List[UsuarioSchemaBase])
+@router.get('/', response_model=List[UsuarioSchemaBase])
 async def get_usuarios(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(UsuarioModel)
@@ -68,35 +68,31 @@ async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
 
 # PUT Usuario
 @router.put('/{usuario_id}', response_model=UsuarioSchemaBase, status_code=status.HTTP_202_ACCEPTED)
-async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
+async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session), usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with db as session:
         query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         result = await session.execute(query)
         usuario_up: UsuarioSchemaBase = result.scalars().unique().one_or_none()
 
-        if usuario_up:
-            if usuario.nome:
-                usuario_up.nome = usuario.nome
-            if usuario.sobrenome:
-                usuario_up.sobrenome = usuario.sobrenome
-            if usuario.email:
-                usuario_up.email = usuario.email
-            if usuario.eh_admin:
-                usuario_up.eh_admin = usuario.eh_admin
-            if usuario.senha:
-                usuario_up.senha = gerar_hash_senha(usuario.senha)
+        if not usuario_up:
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
 
-            await session.commit()
+        if usuario_logado.id != usuario_up.id:
+            raise HTTPException(detail='Operação não permertida.', status_code=status.HTTP_403_FORBIDDEN)
 
-            return usuario_up
-        else:
-            raise HTTPException(detail='Usuário não encontrado.',
-                                status_code=status.HTTP_404_NOT_FOUND)
+        dads_para_atualizar_usuario = usuario.dict(exclude_unset=True)
+
+        for campo, valor in dads_para_atualizar_usuario.items():
+            setattr(usuario_up, campo, valor)
+
+        await session.commit()
+
+        return usuario_up
 
 
 # DELETE usuario
 @router.delete('/{usuario_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session), usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with db as session:
         query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         result = await session.execute(query)
@@ -106,7 +102,7 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
             await session.delete(usuario_del)
             await session.commit()
 
-            return Response(status_code=status.HTTP_404_NOT_FOUND)
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
         else:
             raise HTTPException(detail='Usuário não encontrado.',
                                 status_code=status.HTTP_404_NOT_FOUND)
