@@ -8,6 +8,7 @@ on:
 
 jobs:
   testes-python:
+    environment: CI
     name: Executar Testes de Integração
     runs-on: ubuntu-latest
     env:
