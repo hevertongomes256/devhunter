@@ -43,8 +43,6 @@ async def test_create_vaga(client, prepare_database):
     assert response_vaga.status_code == 201
 
     data = response_vaga.json()
-    print(data)
-    print(data['titulo'])
     assert 'id' in data
     assert data['titulo'] == payload_vaga['titulo']
     assert data['descricao'] == payload_vaga['descricao']
