@@ -10,6 +10,8 @@ jobs:
   testes-python:
     name: Executar Testes de Integração
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: sqlite+aiosqlite:///./test.db
     
     strategy:
       matrix:
