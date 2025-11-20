@@ -1,0 +1,38 @@
+name: Testes Automatizados com Pytest
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  testes-python:
+    name: Executar Testes de Integração
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+        
+    steps:
+    - name: Checkout do Código
+      uses: actions/checkout@v4
+
+    - name: Configurar Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Instalar Dependências
+      run: |
+        # Atualiza o pip e instala as dependências
+        python -m pip install --upgrade pip
+        # Instala as dependências de teste (substitua requirements.txt pelo seu arquivo)
+        pip install -r requirements.txt 
+        # Certifique-se de que todas as suas dependências de teste (pytest, httpx, etc.)
+        # estejam listadas no seu requirements.txt ou utilize pip install pytest pytest-asyncio httpx sqlalchemy...
+        
+    - name: Rodar Testes com Pytest
+      run: |
+        pytest -v -s
