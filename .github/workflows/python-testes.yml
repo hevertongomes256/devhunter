@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DB_URL: sqlite+aiosqlite:///./test.db
-    
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      ALGORITHM: ${{ secrets.ALGORITHM }}
+          
     strategy:
       matrix:
         python-version: ["3.10"]
